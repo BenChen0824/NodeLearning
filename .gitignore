@@ -1,1 +1,4 @@
 /data/header01.txt
+/node_modules
+.env
+package-lock.json
