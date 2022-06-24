@@ -1,0 +1,46 @@
+<%- include("parts/html_head") %> <%- include("parts/navbar") %>
+
+<div class="container">
+    <div class="row">
+        <form method="post">
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label"
+                    >Email address</label
+                >
+                <input
+                    name="email"
+                    type="text"
+                    class="form-control"
+                    id="exampleInputEmail1"
+                    aria-describedby="emailHelp"
+                />
+                <div id="emailHelp" class="form-text">
+                    <%= typeof email !== 'undefined' ? email : "" %>
+                    <!-- 一開始進來會適用get 但沒資料 所以一開始要用三元判斷讓她呈現空字串 -->
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label"
+                    >Password</label
+                >
+                <input
+                    type="text"
+                    name="password"
+                    class="form-control"
+                    id="exampleInputPassword1"
+                />
+                <div id="emailHelp" class="form-text">
+                    <%= locals.password ?? '' %>
+                    <!-- local是在原生express下的功能 -->
+                    <!-- 一開始進來會適用get 但沒資料 所以一開始要用三元判斷讓她呈現空字串 -->
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <pre><%- JSON.stringify(locals, null, 4) %></pre>
+        <!-- 最一開始不會有email跟password的key 等submit後會增加 -->
+    </div>
+</div>
+
+<%- include("parts/scripts") %> <%- include("parts/html_foot") %>

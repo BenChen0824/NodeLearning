@@ -1,0 +1,17 @@
+
+
+POST http://localhost:3300/try-post
+Content-Type: application/x-www-form-urlencoded
+
+name=David&age=20
+
+########
+
+
+POST http://localhost:3300/try-post
+Content-Type: application/json
+
+{
+    "name" : "David",
+    "age" : 20
+}
