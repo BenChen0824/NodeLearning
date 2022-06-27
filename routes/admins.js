@@ -3,7 +3,7 @@ const router = express.Router();
 
 router.get("/r1/:action?/:id?", (req, res) => {
     res.json({
-        code: 1,
+        code: "r1",
         params: req.params,
         baseUrl: req.baseUrl,
         originUrl: req.originalUrl,
@@ -11,7 +11,7 @@ router.get("/r1/:action?/:id?", (req, res) => {
 });
 router.get("/r2/:action?/:id?", (req, res) => {
     res.json({
-        code: 2,
+        code: "r2",
         params: req.params,
         baseUrl: req.baseUrl,
         originUrl: req.originalUrl,
