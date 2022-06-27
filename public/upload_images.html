@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+            integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
+        <title>Document</title>
+        <style>
+            #show {
+                display: flex;
+                flex-wrap: wrap;
+            }
+            .photos {
+                width: 20%;
+                position: relative;
+            }
+            .photos img {
+                width: 100%;
+                
+            }
+            .photos .fa-xmark {
+                font-size: 2rem;
+                position: absolute;
+                top: 0;
+                left: 0;
+                transform: translate(-50%, -50%);
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <form name="form1" style="display: none">
+            <input
+                type="file"
+                name="photos"
+                multiple
+                accept="images/jpeg,images/png"
+            />
+        </form>
+
+        <button onclick="document.form1.photos.click()">上傳圖片</button>
+        <div id="show">
+            <!-- <div class="photos">
+                <img src="" alt="" />
+                <i class="fa-solid fa-xmark"></i>
+            </div> -->
+        </div>
+        <script>
+            const updatePhotos = document.form1.photos;
+            const deleteIt = (event) => {
+                const thisone = event.currentTarget;
+                thisone.closest(".photos").remove();
+            };
+            const photoUnitFunc = ({ filename }) => {
+                return `<div class="photos"  data-f="${filename}">
+                    <img src="/images/${filename}" alt="">
+                    <i class="fa-solid fa-xmark" onclick=deleteIt(event)></i>
+                    </div>`;
+            };
+
+            updatePhotos.addEventListener("change", function (event) {
+                const fd = new FormData(document.form1);
+                fetch("/try-uploads", {
+                    method: "POST",
+                    body: fd,
+                })
+                    .then((r) => r.json())
+                    .then((data) => {
+                        console.log(data);
+                        const show = document.querySelector("#show");
+                        show.innerHTML += data
+                            .map((f) => photoUnitFunc(f))
+                            .join("");
+                    });
+            });
+        </script>
+    </body>
+</html>
