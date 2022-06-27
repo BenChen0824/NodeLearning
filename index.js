@@ -35,17 +35,26 @@ app.post("/try-uploads", upload.array("photos"), (req, res) => {
     res.json(req.files);
 });
 
-app.get('/try-params1/:action/:id', (req, res)=>{
-    res.json({code:2, params: req.params});
+app.get("/try-params1/:action/:id", (req, res) => {
+    res.json({ code: 2, params: req.params });
     // 這邊的要求是最嚴謹的 要放最上面
-})
-app.get('/try-params1/:action', (req, res)=>{
-    res.json({code:3, params: req.params});
-})
-app.get('/try-params1/:action?/:id?', (req, res)=>{
-    res.json({code:1, params: req.params});
-    // 這邊的要求是最鬆的 有沒有放參數都能進來 放最後
 });
+app.get("/try-params1/:action", (req, res) => {
+    res.json({ code: 3, params: req.params });
+});
+app.get("/try-params1/:action?/:id?", (req, res) => {
+    res.json({ code: 1, params: req.params });
+    // 這邊的參數要求是最鬆的 有沒有放參數都能進來 放最後
+});
+
+app.get(/^\/hi\/?/i, (req, res) => {
+    res.send({ url: req.url });
+});
+app.get(["/aaa", "/bbb/"], (req, res) => {
+    res.send({ url: req.url, code: "array", type: typeof req });
+});
+
+app.use("/admins", require(__dirname + "/routes/admins"));
 
 
 app.get("/try-qs", (req, res) => {
