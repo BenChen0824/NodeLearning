@@ -17,6 +17,9 @@ app.use(
         saveUninitialized: false,
         resave: false,
         secret: "asdaspv;olkc;l,masdkjasd;lk;as",
+        cookie: {
+            maxAge: 120000,
+        },
     })
 );
 app.use(express.urlencoded({ extended: false }));
@@ -88,6 +91,13 @@ app.use(adminsRouter);
 
 app.get("/try-qs", (req, res) => {
     res.json(req.query);
+});
+
+app.get("/try-json", (req, res) => {
+    const data = require(__dirname + "/data/data01");
+    console.log(data);
+    res.locals.rows = data;
+    res.render("try-json");
 });
 
 app.get("/", (req, res) => {
