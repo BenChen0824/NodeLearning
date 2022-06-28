@@ -3,8 +3,12 @@ const express = require("express");
 const app = express();
 const multer = require("multer");
 const session = require("express-session");
+const MysqlStore = require("express-mysql-session")(session);
+const db = require(__dirname + "/modules/mysql_connect");
 // const upload = multer({ dest: "tmp_upload/" });
 const upload = require(__dirname + "/modules/upload_imgs");
+const moment = require("moment-timezone");
+const sessionStore = new MysqlStore({}, db);
 
 app.set("view engine", "ejs");
 
@@ -17,6 +21,7 @@ app.use(
         saveUninitialized: false,
         resave: false,
         secret: "asdaspv;olkc;l,masdkjasd;lk;as",
+        store: sessionStore,
         cookie: {
             maxAge: 120000,
         },
@@ -100,6 +105,19 @@ app.get("/try-json", (req, res) => {
     res.render("try-json");
 });
 
+app.get("/try-moment", (req, res) => {
+    const fm = "YYYY-MM-DD HH:mm:ss";
+    const moment1 = moment();
+    const moment2 = moment("2022-02-28");
+
+    res.json({
+        "local-moment1": moment1.format(fm),
+        "local-moment2": moment2.format(fm),
+        "Sydney-moment1": moment1.tz("Australia/Sydney").format(fm),
+        "Sydney-moment2": moment2.tz("Australia/Sydney").format(fm),
+    });
+});
+
 app.get("/", (req, res) => {
     res.render("main", { name: "Ben" });
 });
@@ -110,6 +128,6 @@ app.use((req, res) => {
     );
 });
 
-app.listen(process.env.DB_PORT, () => {
-    console.log(`Server started:${process.env.DB_PORT}`);
+app.listen(process.env.PORT, () => {
+    console.log(`Server started:${process.env.PORT}`);
 });

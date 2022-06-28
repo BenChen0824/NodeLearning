@@ -27,6 +27,7 @@
 <%- include("parts/scripts") %>
 <script>
     const rows = <%- JSON.stringify(rows) %>;
+    //這邊用的 %- 的部分侍衛熱讓他不要跳脫
     console.log(rows);
 
     //這裡是把資料拉到前端  res.locals.rows這裡後端的row可以被抓到
