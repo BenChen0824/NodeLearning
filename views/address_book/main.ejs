@@ -22,6 +22,7 @@
                         <td><%= i.email%></td>
                         <td><%= i.mobile%></td>
                         <td><%= toDateString(i.birthday)%></td>
+                        <!-- index.js有使用template helper functions 存放在res.locals 所以可以在前端這邊直接抓到這個方法-->
                         <td><%= i.address%></td>
                     </tr>
                     <% } %>
