@@ -2,8 +2,20 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-3">
+        <div class="col">
             <form class="d-flex">
+                <input
+                    class="form-control"
+                    type="date"
+                    placeholder="生日開始"
+                    name="beginDate"
+                />
+                <input
+                    class="form-control"
+                    type="date"
+                    placeholder="生日結束"
+                    name="endDate"
+                />
                 <input
                     class="form-control me-2"
                     type="search"
@@ -31,18 +43,12 @@
                     </li>
 
                     <% for (let i = page-5; i<=page+5;i++)
-                    if(i>=1&&i<=Totalpages){ 
-                    const obj = { page:i };
-                    if(query.search){ obj.search=query.search } ; 
-                    const myLink =
+                    if(i>=1&&i<=Totalpages){ const obj = { page:i };
+                    if(query.search){ obj.search=query.search } ; const myLink =
                     new URLSearchParams(obj).toString() %>
 
                     <li class="page-item <%= page===i ? 'active' : '' %>">
-                        <a
-                            class="page-link"
-                            href="?<%= myLink %>"
-                            ><%= i %></a
-                        >
+                        <a class="page-link" href="?<%= myLink %>"><%= i %></a>
                     </li>
                     <% } %>
                     <li class="page-item">
