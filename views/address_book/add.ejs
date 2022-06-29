@@ -37,21 +37,29 @@
     </div>
 </div>
 
-<%- include("../parts/scripts") %> 
+<%- include("../parts/scripts") %>
 <script>
-    function sendForm(event){
+    function sendForm(event) {
         event.preventDefault();
         const fd = new FormData(document.form1);
+        const dataObj = {};
+        for (let i of fd.entries()) {
+            console.log(i);
+            dataObj[i[0]] = i[1];
+        }
+        console.log(dataObj);
 
-        fetch('',{
-            method:'POST',
-            body:fd
-        })
-        .then(r=>r.json())
-        .then(obj=>{
-            console.log(obj);
-        })
+        const usp = new URLSearchParams(dataObj);
+        console.log(usp.toString());
+
+        // fetch('',{
+        //     method:'POST',
+        //     body:fd
+        // })
+        // .then(r=>r.json())
+        // .then(obj=>{
+        //     console.log(obj);
+        // })
     }
-
 </script>
 <%- include("../parts/html_foot") %>
