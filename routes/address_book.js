@@ -1,5 +1,8 @@
 const express = require("express");
 const db = require(__dirname + "/../modules/mysql_connect");
+const { toDateString, toDatetimeString } = require(__dirname +
+    "/../modules/date_tools");
+//這邊是閏改變日期呈現的模組
 
 const router = express.Router();
 
@@ -47,10 +50,14 @@ router.get("/", async (req, res) => {
         }, ${output.perPage}`;
         //取得所有資料在address book裡的 並限制範圍為第n-1頁->第n頁的範圍 並看一頁有多少就放多少資料
         const [result2] = await db.query(sql);
+        result2.forEach((element) => {
+            element.birthday = toDateString(element.birthday);
+            //這邊是把日期依照日期模組改變後 重新存入該變數 如果還需要原本的也可以存到一個新的變數之中
+        });
         output.rows = result2;
     }
     output = { ...output, page, TotalRows, Totalpages };
-    res.json(output);
+    res.render("address_book/main.ejs", output);
 });
 
 module.exports = router;

@@ -10,6 +10,9 @@ const upload = require(__dirname + "/modules/upload_imgs");
 const moment = require("moment-timezone");
 const sessionStore = new MysqlStore({}, db);
 
+const { toDateString, toDatetimeString } = require(__dirname +
+    "/../modules/date_tools");
+
 app.set("view engine", "ejs");
 
 app.set("case sensitive routing", true);
@@ -30,7 +33,8 @@ app.use(
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use("/", (req, res, next) => {
-    res.locals.memberData = { name: "Ben" };
+    res.locals.toDateString=toDateString;
+    res.locals.toDatetimeString=toDatetimeString;
     next();
 });
 
