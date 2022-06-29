@@ -32,7 +32,12 @@
                     <% for (let i = page-5; i<=page+5;i++)
                     if(i>=1&&i<=Totalpages){ %>
                     <li class="page-item <%= page===i ? 'active' : '' %>">
-                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                        <a
+                            class="page-link"
+                            href="?<%= new URLSearchParams({page: i,search: query.search}).toString() %>"
+                            ><%= i %></a
+                        >
+                        
                     </li>
                     <% } %>
                     <li class="page-item">

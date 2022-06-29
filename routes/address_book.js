@@ -63,7 +63,7 @@ const getListHandler = async (req, res) => {
             //這邊的redirect部分一定要用return得 不然會跟下面的res.json卡住
         }
 
-        const sql = `SELECT * FROM address_book ${where} LIMIT ${
+        const sql = `SELECT * FROM address_book ${where} ORDER BY sid DESC LIMIT ${
             (page - 1) * output.perPage
         }, ${output.perPage}`;
         //取得所有資料在address book裡的 並限制範圍為第n-1頁->第n頁的範圍 並看一頁有多少就放多少資料
