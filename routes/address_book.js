@@ -27,8 +27,11 @@ const getListHandler = async (req, res) => {
     let search = req.query.search || "";
     let where = " WHERE 1 ";
     if (search) {
-        where += ` AND name LIKE '%${search}%' `;
+        where += ` AND name LIKE ${db.escape("%" + search + "%")} `;
+        //跳脫用
         output.query.search = search;
+        output.showtest = db.escape("%" + search + "%");
+        //在api那邊做確認
     }
 
     if (page < 1) {
