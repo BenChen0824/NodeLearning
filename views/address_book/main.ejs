@@ -29,15 +29,20 @@
                     <li class="page-item <%= page<=1 ? 'disable' : '' %>">
                         <a class="page-link" href="">Previous</a>
                     </li>
+
                     <% for (let i = page-5; i<=page+5;i++)
-                    if(i>=1&&i<=Totalpages){ %>
+                    if(i>=1&&i<=Totalpages){ 
+                    const obj = { page:i };
+                    if(query.search){ obj.search=query.search } ; 
+                    const myLink =
+                    new URLSearchParams(obj).toString() %>
+
                     <li class="page-item <%= page===i ? 'active' : '' %>">
                         <a
                             class="page-link"
-                            href="?<%= new URLSearchParams({page: i,search: query.search}).toString() %>"
+                            href="?<%= myLink %>"
                             ><%= i %></a
                         >
-                        
                     </li>
                     <% } %>
                     <li class="page-item">
