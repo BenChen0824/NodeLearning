@@ -2,6 +2,53 @@
 
 <div class="container">
     <div class="row">
+        <div class="col-3">
+            <form class="d-flex">
+                <input
+                    class="form-control me-2"
+                    type="search"
+                    placeholder="Search"
+                    name="search"
+                    value="<%= locals.query && query.search ? query.search : '' %>"
+                />
+                <button class="btn btn-outline-success" type="submit">
+                    Search
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item <%= page<=1 ? 'disable' : '' %>">
+                        <a class="page-link" href="#"
+                            ><i class="fa-solid fa-backward-fast"></i
+                        ></a>
+                    </li>
+                    <li class="page-item <%= page<=1 ? 'disable' : '' %>">
+                        <a class="page-link" href="">Previous</a>
+                    </li>
+                    <% for (let i = page-5; i<=page+5;i++)
+                    if(i>=1&&i<=Totalpages){ %>
+                    <li class="page-item <%= page===i ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                    </li>
+                    <% } %>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#"
+                            ><i class="fa-solid fa-forward-fast"></i
+                        ></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
         <div class="col">
             <table class="table">
                 <thead>
@@ -22,7 +69,9 @@
                         <td><%= i.email%></td>
                         <td><%= i.mobile%></td>
                         <td><%= toDateString(i.birthday)%></td>
-                        <!-- index.js有使用template helper functions 存放在res.locals 所以可以在前端這邊直接抓到這個方法-->
+                        <% //index.js有使用template helper functions
+                        //存放在res.locals 所以可以在前端這邊直接抓到這個方法 %>
+
                         <td><%= i.address%></td>
                     </tr>
                     <% } %>

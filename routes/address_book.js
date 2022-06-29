@@ -7,13 +7,16 @@ const { toDateString, toDatetimeString } = require(__dirname +
 const router = express.Router();
 
 //只要會用到資料庫這邊就是加async 下面才可以用await
-router.get("/", async (req, res) => {
+const getListHandler = async (req, res) => {
     let output = {
         perPage: 20,
         page: 1,
-        TotalRows: 0,
-        Totalpages: 0,
-        rows: 0,
+        totalRows: 0,
+        totalPages: 0,
+        code: 0, // 辨識狀態
+        error: "",
+        rows: [],
+        query: {},
     };
 
     let page = +req.query.page || 1;
@@ -21,14 +24,23 @@ router.get("/", async (req, res) => {
     //用戶沒有給第幾頁時預設為第一頁
     //這邊的query是一種屬性
 
+    let search = req.query.search || "";
+    let where = " WHERE 1 ";
+    if (search) {
+        where += ` AND name LIKE '%${search}%' `;
+        output.query.search = search;
+    }
+
     if (page < 1) {
-        return res.redirect("?page=1");
+        output.code = 420;
+        output.error = "頁碼太小";
+        return output;
         //這邊的redirect部分一定要用return得 不然會跟下面的res.json卡住
         //如果page<第一頁 都跳轉到第一頁
     }
 
     //查看總比數並以TotalRows來代表
-    const sqlCount = "SELECT COUNT(1) TotalRows FROM address_book";
+    const sqlCount = `SELECT COUNT(1) TotalRows FROM address_book ${where} `;
     // const [TotalRows] = await db.query(sqlCount);
     //這個拿到就是一個array
     // const [[TotalRows]] = await db.query(sqlCount);
@@ -40,12 +52,15 @@ router.get("/", async (req, res) => {
     if (TotalRows) {
         Totalpages = Math.ceil(TotalRows / output.perPage);
         if (page > Totalpages) {
-            return res.redirect(`?page=${Totalpages}`);
+            output.code = 430;
+            output.error = "頁碼太大";
+            output.Totalpages = Totalpages;
+            return output;
             //如果>最大頁面以最大頁面來呈現
             //這邊的redirect部分一定要用return得 不然會跟下面的res.json卡住
         }
 
-        const sql = `SELECT * FROM address_book LIMIT ${
+        const sql = `SELECT * FROM address_book ${where} LIMIT ${
             (page - 1) * output.perPage
         }, ${output.perPage}`;
         //取得所有資料在address book裡的 並限制範圍為第n-1頁->第n頁的範圍 並看一頁有多少就放多少資料
@@ -56,8 +71,26 @@ router.get("/", async (req, res) => {
         // });
         output.rows = result2;
     }
+    output.code = 200;
     output = { ...output, page, TotalRows, Totalpages };
-    res.render("address_book/main.ejs", output);
+    return output;
+};
+
+router.get("/", async (req, res) => {
+    const output = await getListHandler(req, res);
+    switch (output.code) {
+        case 420:
+            return res.redirect(`?page=1`);
+            break;
+        case 430:
+            return res.redirect(`?page=${output.Totalpages}`);
+            break;
+    }
+    res.render("address_book/main", output);
+});
+router.get("/api", async (req, res) => {
+    const output = await getListHandler(req, res);
+    res.json(output);
 });
 
 module.exports = router;
