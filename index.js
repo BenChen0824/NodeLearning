@@ -11,7 +11,7 @@ const moment = require("moment-timezone");
 const sessionStore = new MysqlStore({}, db);
 
 const { toDateString, toDatetimeString } = require(__dirname +
-    "/../modules/date_tools");
+    "/modules/date_tools");
 
 app.set("view engine", "ejs");
 
@@ -33,8 +33,9 @@ app.use(
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use("/", (req, res, next) => {
-    res.locals.toDateString=toDateString;
-    res.locals.toDatetimeString=toDatetimeString;
+    //template helper functions
+    res.locals.toDateString = toDateString;
+    res.locals.toDatetimeString = toDatetimeString;
     next();
 });
 
