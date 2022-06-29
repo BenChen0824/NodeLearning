@@ -4,6 +4,8 @@ const { toDateString, toDatetimeString } = require(__dirname +
     "/../modules/date_tools");
 //這邊是閏改變日期呈現的模組
 const moment = require("moment-timezone");
+const upload = require(__dirname + "/../modules/upload_imgs");
+
 const router = express.Router();
 
 //只要會用到資料庫這邊就是加async 下面才可以用await
@@ -46,10 +48,14 @@ const getListHandler = async (req, res) => {
     if (endDate) {
         const mo = moment(endDate);
         if (mo.isValid()) {
+            //只要不符合格式都不會進來
             where += ` AND birthday <= '${mo.format("YYYY-MM-DD")}' `;
             output.query.endDate = mo.format("YYYY-MM-DD");
         }
     }
+
+    output.showtest = where;
+    //在api那邊做確認
 
     if (page < 1) {
         output.code = 420;
@@ -95,7 +101,14 @@ const getListHandler = async (req, res) => {
     output = { ...output, page, TotalRows, Totalpages };
     return output;
 };
-
+router.get("/add", async (req, res) => {
+    res.render("address_book/add");
+});
+router.post("/add", upload.none(), async (req, res) => {
+    //這邊需要加 middleware upload.none() 是因為近來的資料是multiple formdata需要解析
+    //如果沒加的話資料送不進後端
+    res.json(req.body);
+});
 router.get("/", async (req, res) => {
     const output = await getListHandler(req, res);
     switch (output.code) {
