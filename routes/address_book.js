@@ -3,7 +3,7 @@ const db = require(__dirname + "/../modules/mysql_connect");
 const { toDateString, toDatetimeString } = require(__dirname +
     "/../modules/date_tools");
 //這邊是閏改變日期呈現的模組
-
+const moment = require("moment-timezone");
 const router = express.Router();
 
 //只要會用到資料庫這邊就是加async 下面才可以用await
@@ -25,6 +25,8 @@ const getListHandler = async (req, res) => {
     //這邊的query是一種屬性
 
     let search = req.query.search || "";
+    let beginDate = req.query.beginDate || "";
+    let endDate = req.query.endDate || "";
     let where = " WHERE 1 ";
     if (search) {
         where += ` AND name LIKE ${db.escape("%" + search + "%")} `;
@@ -32,6 +34,21 @@ const getListHandler = async (req, res) => {
         output.query.search = search;
         output.showtest = db.escape("%" + search + "%");
         //在api那邊做確認
+    }
+    if (beginDate) {
+        const mo = moment(beginDate);
+        if (mo.isValid()) {
+            where += ` AND birthday >= '${mo.format("YYYY-MM-DD")}' `;
+            output.query.beginDate = mo.format("YYYY-MM-DD");
+        }
+    }
+
+    if (endDate) {
+        const mo = moment(endDate);
+        if (mo.isValid()) {
+            where += ` AND birthday <= '${mo.format("YYYY-MM-DD")}' `;
+            output.query.endDate = mo.format("YYYY-MM-DD");
+        }
     }
 
     if (page < 1) {
