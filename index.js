@@ -118,6 +118,8 @@ app.get("/try-moment", (req, res) => {
     });
 });
 
+app.use("/address_book", require(__dirname + "/routes/address_book"));
+
 app.get("/", (req, res) => {
     res.render("main", { name: "Ben" });
 });
