@@ -4,6 +4,7 @@ const { toDateString, toDatetimeString } = require(__dirname +
     "/../modules/date_tools");
 //這邊是閏改變日期呈現的模組
 const moment = require("moment-timezone");
+const Joi = require("joi");
 const upload = require(__dirname + "/../modules/upload_imgs");
 
 const router = express.Router();
@@ -108,7 +109,21 @@ router.post("/add", upload.none(), async (req, res) => {
     //這邊需要加 middleware upload.none() 是因為近來的資料是multiple formdata需要解析
     //如果需要使用JSON或是URLEncoded傳資料也可以先放著 不衝突
     //如果沒加的話資料送不進後端
-    res.json(req.body);
+
+    const schema = Joi.object({
+        //後端資料驗證
+        name: Joi.string().min(3).max(20).required().label("姓名必填"),
+        //當空的時候回提示姓名未填
+        email: Joi.string().email().required(),
+        mobile: Joi.string(),
+        birthday: Joi.date(),
+        // birthday: Joi.any().optional(),
+        //(any)任何類型且可能會(optional)沒送該欄值
+        address: Joi.string(),
+    });
+
+    res.json(schema.validate(req.body, { abortEarly: false }));
+    // abortEarly: false 當有錯誤或不符合還是會繼續跑完
 });
 router.get("/", async (req, res) => {
     const output = await getListHandler(req, res);

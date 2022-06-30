@@ -50,11 +50,11 @@
         console.log(dataObj);
 
         //傳送JSON
-        fetch("", {
-            method: "POST",
-            body: JSON.stringify(dataObj),
-            headers: { "Content-Type": "application/x-www-form-urlencoded " },
-        });
+        // fetch("", {
+        //     method: "POST",
+        //     body: JSON.stringify(dataObj),
+        //     headers: { "Content-Type": "application/x-www-form-urlencoded " },
+        // });
 
         //URLEncoded
         // const usp = new URLSearchParams(dataObj);
@@ -66,14 +66,14 @@
         // });
 
         // multipart-formdata
-        // fetch('',{
-        //     method:'POST',
-        //     body:fd
-        // })
-        // .then(r=>r.json())
-        // .then(obj=>{
-        //     console.log(obj);
-        // })
+        fetch('',{
+            method:'POST',
+            body:fd
+        })
+        .then(r=>r.json())
+        .then(obj=>{
+            console.log(obj);
+        })
     }
 </script>
 <%- include("../parts/html_foot") %>
