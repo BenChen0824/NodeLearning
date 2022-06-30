@@ -39,8 +39,7 @@ app.use("/", (req, res, next) => {
     next();
 });
 
-app.use(express.static("public"));
-app.use("/bootstrap", express.static("node_modules/bootstrap/dist"));
+
 
 // middleware: 中介軟體 (function)
 const bodyparser = express.urlencoded({ extended: false });
@@ -128,6 +127,14 @@ app.use("/address_book", require(__dirname + "/routes/address_book"));
 app.get("/", (req, res) => {
     res.render("main", { name: "Ben" });
 });
+
+//---------static---------------------
+app.use(express.static("public"));
+app.use("/bootstrap", express.static("node_modules/bootstrap/dist"));
+app.use("/joi", express.static("node_modules/joi/dist"));
+
+
+
 
 app.use((req, res) => {
     res.send(
