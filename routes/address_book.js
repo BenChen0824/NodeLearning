@@ -106,6 +106,7 @@ router.get("/add", async (req, res) => {
 });
 router.post("/add", upload.none(), async (req, res) => {
     //這邊需要加 middleware upload.none() 是因為近來的資料是multiple formdata需要解析
+    //如果需要使用JSON或是URLEncoded傳資料也可以先放著 不衝突
     //如果沒加的話資料送不進後端
     res.json(req.body);
 });
