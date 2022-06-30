@@ -142,7 +142,8 @@ router.post("/add", upload.none(), async (req, res) => {
 
     //mysql2內建用法 非正規
     const sql = "INSERT INTO `address_book` SET ?";
-    const insertData = { ...req.body, created_at: new Date() };
+    const birthday = req.body.birthday || "";
+    const insertData = { ...req.body, birthday, created_at: new Date() };
     const [result] = await db.query(sql, [insertData]);
 
     res.json(result);

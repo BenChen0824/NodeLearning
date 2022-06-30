@@ -8,6 +8,8 @@ const db = require(__dirname + "/modules/mysql_connect");
 // const upload = multer({ dest: "tmp_upload/" });
 const upload = require(__dirname + "/modules/upload_imgs");
 const moment = require("moment-timezone");
+const axios = require("axios");
+
 const sessionStore = new MysqlStore({}, db);
 
 const { toDateString, toDatetimeString } = require(__dirname +
@@ -38,8 +40,6 @@ app.use("/", (req, res, next) => {
     res.locals.toDatetimeString = toDatetimeString;
     next();
 });
-
-
 
 // middleware: 中介軟體 (function)
 const bodyparser = express.urlencoded({ extended: false });
@@ -124,6 +124,18 @@ app.get("/try-moment", (req, res) => {
 
 app.use("/address_book", require(__dirname + "/routes/address_book"));
 
+app.get("/yahoo", (req, res) => {
+    axios
+        .get("https://tw.yahoo.com/")
+        //yahoo本身事全後端網站 所以圖片路徑那些都是絕對路徑才讀的到
+        //如果有前端框架舊址譨吃到一層沒辦法全部顯示
+        .then(function (response) {
+            // handle success
+            console.log(response);
+            res.send(response.data);
+        });
+});
+
 app.get("/", (req, res) => {
     res.render("main", { name: "Ben" });
 });
@@ -132,9 +144,6 @@ app.get("/", (req, res) => {
 app.use(express.static("public"));
 app.use("/bootstrap", express.static("node_modules/bootstrap/dist"));
 app.use("/joi", express.static("node_modules/joi/dist"));
-
-
-
 
 app.use((req, res) => {
     res.send(
