@@ -39,16 +39,39 @@
 
 <%- include("../parts/scripts") %>
 <script>
+    const Joi = joi;
+
     function sendForm(event) {
         event.preventDefault();
+
         const fd = new FormData(document.form1);
         const dataObj = {};
         for (let i of fd.entries()) {
-            console.log(i);
+            // console.log(i);
             dataObj[i[0]] = i[1];
         }
         console.log(dataObj);
 
+        // 自訂訊息
+        // https://stackoverflow.com/questions/48720942/node-js-joi-how-to-display-a-custom-error-messages
+        const schema = Joi.object({
+            name: Joi.string()
+                .min(3)
+                .max(20)
+                .required()
+                .messages({ "string.empty": "姓名必填" }),
+            //當空的時候回提示姓名未填
+            email: Joi.string().email({ tlds: false }).required(),
+            //這邊先不要用.email() 容易出問題
+            mobile: Joi.string(),
+            birthday: Joi.any(),
+            // birthday: Joi.any().optional(),
+            //(any)任何類型且可能會(optional)沒送該欄值
+            address: Joi.string(),
+        });
+
+        console.log(schema.validate(dataObj, { abortEarly: false }));
+        const usp = new URLSearchParams(fd);
         //傳送JSON
         // fetch("", {
         //     method: "POST",
@@ -58,6 +81,7 @@
 
         //URLEncoded
         // const usp = new URLSearchParams(dataObj);
+
         // console.log(usp.toString());
         // fetch("", {
         //     method: "POST",
@@ -66,14 +90,15 @@
         // });
 
         // multipart-formdata
-        fetch('',{
-            method:'POST',
-            body:fd
+        fetch("", {
+            method: "POST",
+            body: fd,
         })
-        .then(r=>r.json())
-        .then(obj=>{
-            console.log(obj);
-        })
+            .then((r) => r.json())
+            .then((obj) => {
+                console.log(obj);
+            });
     }
 </script>
+
 <%- include("../parts/html_foot") %>

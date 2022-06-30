@@ -121,9 +121,31 @@ router.post("/add", upload.none(), async (req, res) => {
         //(any)任何類型且可能會(optional)沒送該欄值
         address: Joi.string(),
     });
-
-    res.json(schema.validate(req.body, { abortEarly: false }));
+    console.log(schema.validate(req.body, { abortEarly: false }));
     // abortEarly: false 當有錯誤或不符合還是會繼續跑完
+
+    /*
+    const sql =
+        "INSERT INTO `address_book`( `name`, `email`, `mobile`, `birthday`, `address`, `created_at`) VALUES (?,?,?,?,?,NOW())";
+    const { name, email, mobile, birthday, address } = req.body;
+    const [result] = await db.query(sql, [
+        name,
+        email,
+        mobile,
+        birthday,
+        address,
+    ]);
+    */
+
+    //{"fieldCount":0,"affectedRows":1,"insertId":1118,"info":"","serverStatus":2,"warningStatus":0}
+    // 回應的資料
+
+    //mysql2內建用法 非正規
+    const sql = "INSERT INTO `address_book` SET ?";
+    const insertData = { ...req.body, created_at: new Date() };
+    const [result] = await db.query(sql, [insertData]);
+
+    res.json(result);
 });
 router.get("/", async (req, res) => {
     const output = await getListHandler(req, res);
