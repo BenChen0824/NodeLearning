@@ -179,6 +179,11 @@ app.route("/login")
         res.json(output);
     });
 
+app.get("/logout", (req, res) => {
+    delete req.session.admin;
+    res.redirect("/");
+});
+
 app.get("/", (req, res) => {
     res.render("main", { name: "Ben" });
 });
