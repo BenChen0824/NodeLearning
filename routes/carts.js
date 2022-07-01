@@ -44,7 +44,7 @@ router.post("/", async (req, res) => {
         return res.json(output);
     }
 
-    // 判斷該商品是否已經加入購物車
+    // 判斷該商品是否已經加入購物車 有加入不該為新增 而是使用UPDATE
     const sql3 = `SELECT COUNT(1) num FROM carts WHERE product_id=? AND user_id=?`;
     const [[{ num }]] = await db.query(sql3, [req.body.product_id, fake_user]);
     if (num > 0) {
