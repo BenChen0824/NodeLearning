@@ -52,6 +52,11 @@
                 // document.form1.account.value = obj.account+"123"
                 // document.form1.password.value = obj.password+"123"
                 console.log(obj);
+                if (obj.success) {
+                    location.href = "/";
+                } else {
+                    alert(obj.error);
+                }
             });
     }
 </script>

@@ -39,6 +39,11 @@ app.use("/", (req, res, next) => {
     //template helper functions
     res.locals.toDateString = toDateString;
     res.locals.toDatetimeString = toDatetimeString;
+
+    res.locals.session = req.session;
+    //這邊能成功是基於下面有定義req.session 沒有的話無法使用
+    //也因為這邊是最高的middleware 所以所有都會經過這邊 在跳轉頁面時也不會登出
+
     next();
 });
 
@@ -164,6 +169,11 @@ app.route("/login")
             output.code = 402;
             output.error = "密碼錯誤";
             return res.json(output);
+        } else {
+            req.session.admin = {
+                sid: r1[0].sid,
+                account: r1[0].account,
+            };
         }
 
         res.json(output);
