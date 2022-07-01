@@ -10,6 +10,7 @@ const upload = require(__dirname + "/modules/upload_imgs");
 const moment = require("moment-timezone");
 const axios = require("axios");
 const bcrypt = require("bcryptjs");
+const cors = require("cors");
 
 const sessionStore = new MysqlStore({}, db);
 
@@ -22,6 +23,16 @@ app.set("case sensitive routing", true);
 //將url得大小寫區隔開來 預設大小寫匯市不同的url
 
 //TOP LEVEL Middleware
+
+const corsOptions = {
+    credentials: true,
+    origin: (origin, cb) => {
+        console.log({ origin });
+        cb(null, true);
+    },
+};
+
+app.use(cors(corsOptions));
 app.use(
     session({
         saveUninitialized: false,
