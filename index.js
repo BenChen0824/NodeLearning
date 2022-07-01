@@ -27,7 +27,7 @@ app.set("case sensitive routing", true);
 const corsOptions = {
     credentials: true,
     origin: (origin, cb) => {
-        console.log({ origin });
+        // console.log({ origin });
         cb(null, true);
     },
 };
@@ -140,6 +140,7 @@ app.get("/try-moment", (req, res) => {
 });
 
 app.use("/address_book", require(__dirname + "/routes/address_book"));
+app.use("/carts", require(__dirname + "/routes/carts"));
 
 app.get("/yahoo", (req, res) => {
     axios

@@ -65,13 +65,12 @@ created_at
 
 同源政策 Same-origin policy
 
-協定
+協定 protocal
 http/https
 
-埠號
+埠號 port
 
-網域
-domain
+網域 domain
 主機名稱會看成字串來比對  所以如果是 127.0.0.1 localhost 
 這兩個都算是本機端 但在判定上是不同源
 
