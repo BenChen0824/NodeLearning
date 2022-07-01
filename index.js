@@ -9,6 +9,7 @@ const db = require(__dirname + "/modules/mysql_connect");
 const upload = require(__dirname + "/modules/upload_imgs");
 const moment = require("moment-timezone");
 const axios = require("axios");
+const bcrypt = require("bcryptjs");
 
 const sessionStore = new MysqlStore({}, db);
 
@@ -135,6 +136,38 @@ app.get("/yahoo", (req, res) => {
             res.send(response.data);
         });
 });
+
+//--------------登入帳密-----------------
+app.route("/login")
+    .get(async (req, res) => {
+        res.render("login");
+    })
+    .post(async (req, res) => {
+        const output = {
+            success: false,
+            error: "",
+        };
+        const sql = "SELECT * FROM admins WHERE account=?";
+        const [r1] = await db.query(sql, req.body.account);
+
+        if (!r1.length) {
+            output.code = 401;
+            output.error = "帳號錯誤";
+            return res.json(output);
+        }
+        output.success = await bcrypt.compare(
+            req.body.password,
+            r1[0].pass_hash
+        );
+
+        if (!output.success) {
+            output.code = 402;
+            output.error = "密碼錯誤";
+            return res.json(output);
+        }
+
+        res.json(output);
+    });
 
 app.get("/", (req, res) => {
     res.render("main", { name: "Ben" });
