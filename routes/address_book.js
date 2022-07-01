@@ -5,6 +5,7 @@ const { toDateString, toDatetimeString } = require(__dirname +
 //這邊是閏改變日期呈現的模組
 const moment = require("moment-timezone");
 const Joi = require("joi");
+const { application } = require("express");
 const upload = require(__dirname + "/../modules/upload_imgs");
 
 const router = express.Router();
@@ -102,13 +103,31 @@ const getListHandler = async (req, res) => {
     output = { ...output, page, TotalRows, Totalpages };
     return output;
 };
+
+router.use( (req, res, next) => {
+    /*
+    if (!req.session.admin) {
+        return res.redirect("/");
+    }
+    */
+    next();
+});
+
 router.get("/add", async (req, res) => {
+    if (!req.session.admin) {
+        return res.redirect("/");
+        //如果沒登入 案新增會回到主頁面
+    }
     res.render("address_book/add");
 });
 router.post("/add", upload.none(), async (req, res) => {
     //這邊需要加 middleware upload.none() 是因為近來的資料是multiple formdata需要解析
     //如果需要使用JSON或是URLEncoded傳資料也可以先放著 不衝突
     //如果沒加的話資料送不進後端
+
+    if (!req.session.admin) {
+        return res.json({ success: false, error: "請先登入" });
+    }
 
     const schema = Joi.object({
         //後端資料驗證
@@ -158,7 +177,12 @@ router.get("/", async (req, res) => {
             return res.redirect(`?page=${output.Totalpages}`);
             break;
     }
-    res.render("address_book/main", output);
+
+    if (!req.session.admin) {
+        res.render("address_book/main-noadmin", output);
+    } else {
+        res.render("address_book/main", output);
+    }
 });
 router.get("/api", async (req, res) => {
     const output = await getListHandler(req, res);
