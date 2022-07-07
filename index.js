@@ -8,8 +8,15 @@ const db = require(__dirname + "/modules/mysql_connect");
 // const upload = multer({ dest: "tmp_upload/" });
 const upload = require(__dirname + "/modules/upload_imgs");
 const moment = require("moment-timezone");
+const axios = require("axios");
+const bcrypt = require("bcryptjs");
+const cors = require("cors");
+
 const sessionStore = new MysqlStore({}, db);
 const LinePay = require("line-pay-v3");
+
+const { toDateString, toDatetimeString } = require(__dirname +
+    "/modules/date_tools");
 
 app.set("view engine", "ejs");
 
@@ -17,6 +24,16 @@ app.set("case sensitive routing", true);
 //將url得大小寫區隔開來 預設大小寫匯市不同的url
 
 //TOP LEVEL Middleware
+
+const corsOptions = {
+    credentials: true,
+    origin: (origin, cb) => {
+        // console.log({ origin });
+        cb(null, true);
+    },
+};
+
+app.use(cors(corsOptions));
 app.use(
     session({
         saveUninitialized: false,
@@ -31,12 +48,16 @@ app.use(
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use("/", (req, res, next) => {
-    res.locals.memberData = { name: "Ben" };
+    //template helper functions
+    res.locals.toDateString = toDateString;
+    res.locals.toDatetimeString = toDatetimeString;
+
+    res.locals.session = req.session;
+    //這邊能成功是基於下面有定義req.session 沒有的話無法使用
+    //也因為這邊是最高的middleware 所以所有都會經過這邊 在跳轉頁面時也不會登出
+
     next();
 });
-
-app.use(express.static("public"));
-app.use("/bootstrap", express.static("node_modules/bootstrap/dist"));
 
 // middleware: 中介軟體 (function)
 const bodyparser = express.urlencoded({ extended: false });
@@ -123,9 +144,71 @@ app.get("/try-moment", (req, res) => {
     });
 });
 
+app.use("/address_book", require(__dirname + "/routes/address_book"));
+app.use("/carts", require(__dirname + "/routes/carts"));
+
+app.get("/yahoo", (req, res) => {
+    axios
+        .get("https://tw.yahoo.com/")
+        //yahoo本身事全後端網站 所以圖片路徑那些都是絕對路徑才讀的到
+        //如果有前端框架舊址譨吃到一層沒辦法全部顯示
+        .then(function (response) {
+            // handle success
+            console.log(response);
+            res.send(response.data);
+        });
+});
+
+//--------------登入帳密-----------------
+app.route("/login")
+    .get(async (req, res) => {
+        res.render("login");
+    })
+    .post(async (req, res) => {
+        const output = {
+            success: false,
+            error: "",
+        };
+        const sql = "SELECT * FROM admins WHERE account=?";
+        const [r1] = await db.query(sql, req.body.account);
+
+        if (!r1.length) {
+            output.code = 401;
+            output.error = "帳號錯誤";
+            return res.json(output);
+        }
+        output.success = await bcrypt.compare(
+            req.body.password,
+            r1[0].pass_hash
+        );
+
+        if (!output.success) {
+            output.code = 402;
+            output.error = "密碼錯誤";
+            return res.json(output);
+        } else {
+            req.session.admin = {
+                sid: r1[0].sid,
+                account: r1[0].account,
+            };
+        }
+
+        res.json(output);
+    });
+
+app.get("/logout", (req, res) => {
+    delete req.session.admin;
+    res.redirect("/");
+});
+
 app.get("/", (req, res) => {
     res.render("main", { name: "Ben" });
 });
+
+//---------static---------------------
+app.use(express.static("public"));
+app.use("/bootstrap", express.static("node_modules/bootstrap/dist"));
+app.use("/joi", express.static("node_modules/joi/dist"));
 
 app.use((req, res) => {
     res.send(
