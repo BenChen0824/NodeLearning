@@ -9,6 +9,7 @@ const db = require(__dirname + "/modules/mysql_connect");
 const upload = require(__dirname + "/modules/upload_imgs");
 const moment = require("moment-timezone");
 const sessionStore = new MysqlStore({}, db);
+const LinePay = require("line-pay-v3");
 
 app.set("view engine", "ejs");
 
@@ -96,6 +97,10 @@ app.use(adminsRouter);
 
 app.get("/try-qs", (req, res) => {
     res.json(req.query);
+});
+
+app.get("/linepay", (req, res) => {
+    console.log(JSON.stringify(req.body));
 });
 
 app.get("/try-json", (req, res) => {
